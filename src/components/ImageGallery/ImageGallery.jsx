@@ -1,14 +1,33 @@
+import { Component } from 'react';
 import { ImageGalleryContainer } from './ImageGallery.styled';
 import { ImageGalleryItem } from './ImageGalleryItem';
+import galleryApi from 'services/fetchImages';
 
-const images = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+export class ImageGallery extends Component {
+  state = {
+    images: [],
+  };
 
-export const ImageGallery = () => {
-  return (
-    <ImageGalleryContainer>
-      {images.map(img => {
-        return <ImageGalleryItem key={img}></ImageGalleryItem>;
-      })}
-    </ImageGalleryContainer>
-  );
-};
+  async componentDidUpdate(prevProps, prevState) {
+    const searchQuery = this.props.search;
+
+    if (prevProps.search === searchQuery) return;
+
+    const images = await galleryApi.fetchImagesByQuery(searchQuery);
+    this.setState({ images: images });
+
+    console.log('Http Request')
+  }
+
+  render() {
+    const { images } = this.state;
+
+    return (
+      <ImageGalleryContainer>
+        {images.map(image => (
+          <ImageGalleryItem key={image.id} image={image}></ImageGalleryItem>
+        ))}
+      </ImageGalleryContainer>
+    );
+  }
+}
