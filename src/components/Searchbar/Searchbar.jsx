@@ -7,8 +7,13 @@ import {
 import { FaSearch } from 'react-icons/fa';
 import { Component } from 'react';
 import { toast } from 'react-toastify';
+import PropTypes from 'prop-types';
 
 export class Searchbar extends Component {
+  static propTypes = {
+    onSearch: PropTypes.func.isRequired,
+  };
+
   state = {
     inputValue: '',
   };
@@ -22,7 +27,7 @@ export class Searchbar extends Component {
     const { inputValue } = this.state;
 
     if (inputValue === '') {
-      toast.error('Please enter search query!')
+      toast.error('Please enter search query!');
       return;
     }
 

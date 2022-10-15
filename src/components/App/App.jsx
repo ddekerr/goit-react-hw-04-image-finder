@@ -10,15 +10,12 @@ export class App extends Component {
   state = {
     searchQuery: '',
   };
-  
 
   formSubmit = query => {
     this.setState({ searchQuery: query });
   };
 
   render() {
-
-
     return (
       <Wrapper>
         <Searchbar onSearch={this.formSubmit} />
@@ -28,7 +25,7 @@ export class App extends Component {
           autoClose={2000}
           draggable={false}
         />
-        <ImageGallery searchQuery={this.state.searchQuery}/>
+        <ImageGallery searchQuery={this.state.searchQuery} />
         <LoadMoreButton />
       </Wrapper>
     );

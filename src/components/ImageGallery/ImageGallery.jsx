@@ -2,9 +2,13 @@ import { Component } from 'react';
 import { ImageGalleryContainer } from './ImageGallery.styled';
 import { ImageGalleryItem } from './ImageGalleryItem';
 import galleryApi from 'services/fetchImages';
-import { toast } from 'react-toastify';
+import PropTypes from 'prop-types';
 
 export class ImageGallery extends Component {
+  static propTypes = {
+    searchQuery: PropTypes.string.isRequired,
+  };
+
   state = {
     images: [],
     error: null,
