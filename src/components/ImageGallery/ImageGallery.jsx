@@ -70,7 +70,10 @@ export class ImageGallery extends Component {
         <>
           <ImageGalleryContainer>
             {images.map(image => (
-              <ImageGalleryItem key={image.id} image={image}></ImageGalleryItem>
+              <ImageGalleryItem
+                key={image.id}
+                image={{ webformatURL: image.webformatURL, tags: image.tags }}
+              ></ImageGalleryItem>
             ))}
           </ImageGalleryContainer>
           <LoadMoreButton />
