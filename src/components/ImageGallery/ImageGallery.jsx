@@ -1,11 +1,13 @@
+import PropTypes from 'prop-types';
+import galleryApi from 'services/fetchImages';
+
 import { Component } from 'react';
+import { Puff } from 'react-loader-spinner';
+import { toast, ToastContainer } from 'react-toastify';
+
 import { ImageGalleryContainer } from './ImageGallery.styled';
 import { ImageGalleryItem } from './ImageGalleryItem';
 import { LoadMoreButton } from 'components/LoadMoreButton/LoadMoreButton';
-import galleryApi from 'services/fetchImages';
-import PropTypes from 'prop-types';
-import { Puff } from 'react-loader-spinner';
-import { toast, ToastContainer } from 'react-toastify';
 
 export class ImageGallery extends Component {
   static propTypes = {
