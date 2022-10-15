@@ -4,10 +4,10 @@ import {
   ImageGalleryImage,
 } from './ImageGallery.styled';
 
-export const ImageGalleryItem = ({ image }) => {
+export const ImageGalleryItem = ({ image: { webformatURL, tags } }) => {
   return (
     <ImageGalleryItemContainer>
-      <ImageGalleryImage src={image.webformatURL} alt={image.tags} />
+      <ImageGalleryImage src={webformatURL} alt={tags} />
     </ImageGalleryItemContainer>
   );
 };
