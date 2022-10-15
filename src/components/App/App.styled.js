@@ -6,3 +6,9 @@ export const Wrapper = styled.div`
   grid-gap: 16px;
   padding-bottom: 24px;
 `;
+
+export const Section = styled.section`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
