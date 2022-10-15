@@ -3,6 +3,8 @@ import styled from '@emotion/styled';
 export const Button = styled.button`
   display: inline-block;
   min-width: 180px;
+  margin-left: auto;
+  margin-right: auto;
   padding: 8px 16px;
   border: 0;
   border-radius: 2px;
