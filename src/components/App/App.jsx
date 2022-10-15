@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import { Wrapper } from './App.styled';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 
 import { Searchbar } from 'components/Searchbar/Searchbar';
 import { ImageGallery } from 'components/ImageGallery/ImageGallery';
@@ -8,20 +8,17 @@ import { LoadMoreButton } from 'components/LoadMoreButton/LoadMoreButton';
 
 export class App extends Component {
   state = {
-    searchField: '',
+    searchQuery: '',
   };
-
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.searchField === this.state.searchField) {
-      toast.error('Please enter other query!');
-    }
-  }
+  
 
   formSubmit = query => {
-    this.setState({ searchField: query });
+    this.setState({ searchQuery: query });
   };
 
   render() {
+
+
     return (
       <Wrapper>
         <Searchbar onSearch={this.formSubmit} />
@@ -31,7 +28,7 @@ export class App extends Component {
           autoClose={2000}
           draggable={false}
         />
-        <ImageGallery search={this.state.searchField} />
+        <ImageGallery searchQuery={this.state.searchQuery}/>
         <LoadMoreButton />
       </Wrapper>
     );

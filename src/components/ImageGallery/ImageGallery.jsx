@@ -2,32 +2,57 @@ import { Component } from 'react';
 import { ImageGalleryContainer } from './ImageGallery.styled';
 import { ImageGalleryItem } from './ImageGalleryItem';
 import galleryApi from 'services/fetchImages';
+import { toast } from 'react-toastify';
 
 export class ImageGallery extends Component {
   state = {
     images: [],
+    error: null,
+    status: 'idle',
   };
 
   async componentDidUpdate(prevProps, prevState) {
-    const searchQuery = this.props.search;
+    const { searchQuery } = this.props;
 
-    if (prevProps.search === searchQuery) return;
+    if (prevProps.searchQuery !== searchQuery) {
+      this.setState({ status: 'pending' });
 
-    const images = await galleryApi.fetchImagesByQuery(searchQuery);
-    this.setState({ images: images });
+      const images = await galleryApi.fetchImagesByQuery(searchQuery);
 
-    console.log('Http Request')
+      if (images.length > 0) {
+        this.setState({ images, status: 'resolved' });
+      } else {
+        this.setState({
+          error: 'No result by this query!',
+          status: 'rejected',
+        });
+      }
+    }
   }
 
   render() {
-    const { images } = this.state;
+    const { images, error, status } = this.state;
 
-    return (
-      <ImageGalleryContainer>
-        {images.map(image => (
-          <ImageGalleryItem key={image.id} image={image}></ImageGalleryItem>
-        ))}
-      </ImageGalleryContainer>
-    );
+    if (status === 'idle') {
+      return <p>No match result yet</p>;
+    }
+
+    if (status === 'pending') {
+      return <p>Loading...</p>;
+    }
+
+    if (status === 'rejected') {
+      return <p>{error}</p>;
+    }
+
+    if (status === 'resolved') {
+      return (
+        <ImageGalleryContainer>
+          {images.map(image => (
+            <ImageGalleryItem key={image.id} image={image}></ImageGalleryItem>
+          ))}
+        </ImageGalleryContainer>
+      );
+    }
   }
 }
