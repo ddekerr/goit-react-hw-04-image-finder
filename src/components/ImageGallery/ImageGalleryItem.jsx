@@ -1,5 +1,5 @@
-import { ImageGalleryContainer } from './ImageGallery.styled';
+import { ImageGalleryItemContainer, ImageGalleryImage } from './ImageGallery.styled';
 
-export const ImageGallery = () => {
-  return <ImageGalleryContainer></ImageGalleryContainer>;
+export const ImageGalleryItem = () => {
+  return <ImageGalleryItemContainer></ImageGalleryItemContainer>;
 };
