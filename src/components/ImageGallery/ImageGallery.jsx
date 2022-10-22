@@ -72,7 +72,11 @@ export class ImageGallery extends Component {
             {images.map(image => (
               <ImageGalleryItem
                 key={image.id}
-                image={{ webformatURL: image.webformatURL, tags: image.tags }}
+                image={{
+                  webformatURL: image.webformatURL,
+                  tags: image.tags,
+                  largeImageURL: image.largeImageURL,
+                }}
               ></ImageGalleryItem>
             ))}
           </ImageGalleryContainer>

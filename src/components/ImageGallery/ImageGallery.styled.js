@@ -32,3 +32,8 @@ export const ImageGalleryImage = styled.img`
     cursor: zoom-in;
   }
 `;
+
+export const ModalImage = styled.img`
+  height: 100%;
+  object-fit: cover;
+`;
