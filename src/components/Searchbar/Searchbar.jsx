@@ -21,7 +21,7 @@ export class Searchbar extends Component {
   };
 
   inputChange = e => {
-    this.setState({ inputValue: e.target.value.trim().toLowerCase() });
+    this.setState({ inputValue: e.target.value });
   };
 
   handleSubmit = e => {

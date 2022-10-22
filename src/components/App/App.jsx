@@ -11,7 +11,7 @@ export class App extends Component {
   };
 
   formSubmit = query => {
-    this.setState({ searchQuery: query });
+    this.setState({ searchQuery: query.trim().toLowerCase() });
   };
 
   render() {
