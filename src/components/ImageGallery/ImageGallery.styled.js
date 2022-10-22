@@ -35,5 +35,6 @@ export const ImageGalleryImage = styled.img`
 
 export const ModalImage = styled.img`
   height: 100%;
+  width: 100%;
   object-fit: cover;
 `;
