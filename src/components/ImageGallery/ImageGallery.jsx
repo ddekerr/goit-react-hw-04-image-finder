@@ -18,18 +18,26 @@ export class ImageGallery extends Component {
     images: [],
     error: null,
     status: 'idle',
+    page: 1,
   };
 
-  async componentDidUpdate(prevProps) {
+  async componentDidUpdate(prevProps, prevState) {
     const { searchQuery } = this.props;
+    const { page } = this.state;
 
-    if (prevProps.searchQuery !== searchQuery) {
+    if (
+      prevProps.searchQuery !== searchQuery ||
+      prevState.page !== this.state.page
+    ) {
       this.setState({ status: 'pending' });
 
-      const images = await galleryApi.fetchImagesByQuery(searchQuery);
+      const images = await galleryApi.fetchImagesByQuery(searchQuery, page);
 
       if (images.length > 0) {
-        this.setState({ images, status: 'resolved' });
+        this.setState({
+          images: this.state.images.concat(images),
+          status: 'resolved',
+        });
       } else {
         this.setState({
           error: 'No result by this query!',
@@ -39,6 +47,10 @@ export class ImageGallery extends Component {
       }
     }
   }
+
+  loadMore = () => {
+    this.setState(prevState => ({ page: prevState.page + 1 }));
+  };
 
   render() {
     const { images, status } = this.state;
@@ -54,7 +66,7 @@ export class ImageGallery extends Component {
     if (status === 'rejected') {
       return (
         <>
-          <p>No match result yet</p>
+          <p>{this.state.error}</p>
           <ToastContainer
             theme="light"
             pauseOnHover={false}
@@ -80,7 +92,7 @@ export class ImageGallery extends Component {
               ></ImageGalleryItem>
             ))}
           </ImageGalleryContainer>
-          <LoadMoreButton />
+          <LoadMoreButton onClick={this.loadMore} />
         </>
       );
     }

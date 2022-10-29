@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-async function fetchImagesByQuery(query, page = 1) {
+async function fetchImagesByQuery(query, page) {
   const config = {
     baseURL: 'https://pixabay.com/api/',
     params: {
