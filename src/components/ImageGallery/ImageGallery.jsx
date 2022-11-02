@@ -19,6 +19,7 @@ export class ImageGallery extends Component {
     error: null,
     status: 'idle',
     page: 1,
+    totalImages: null,
   };
 
   async componentDidUpdate(prevProps, prevState) {
@@ -33,10 +34,11 @@ export class ImageGallery extends Component {
 
       const images = await galleryApi.fetchImagesByQuery(searchQuery, page);
 
-      if (images.length > 0) {
+      if (images.hits.length > 0) {
         this.setState({
-          images: this.state.images.concat(images),
+          images: this.state.images.concat(images.hits),
           status: 'resolved',
+          totalImages: images.total,
         });
       } else {
         this.setState({
@@ -53,7 +55,7 @@ export class ImageGallery extends Component {
   };
 
   render() {
-    const { images, status } = this.state;
+    const { images, status, totalImages } = this.state;
 
     if (status === 'idle') {
       return <p>No match result yet</p>;
@@ -92,7 +94,9 @@ export class ImageGallery extends Component {
               ></ImageGalleryItem>
             ))}
           </ImageGalleryContainer>
-          <LoadMoreButton onClick={this.loadMore} />
+          {totalImages !== images.length && (
+            <LoadMoreButton onClick={this.loadMore} />
+          )}
         </>
       );
     }
