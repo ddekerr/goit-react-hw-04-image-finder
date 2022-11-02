@@ -5,6 +5,7 @@ import { Overlay, ModalContent } from './Modal.styled';
 export class Modal extends Component {
   static propTypes = {
     onClose: PropTypes.func.isRequired,
+    children: PropTypes.element.isRequired,
   };
 
   componentDidMount() {
