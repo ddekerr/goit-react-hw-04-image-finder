@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import galleryApi from 'services/fetchImages';
 
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 import { Puff } from 'react-loader-spinner';
 import { toast, ToastContainer } from 'react-toastify';
 
@@ -9,96 +9,94 @@ import { ImageGalleryContainer } from './ImageGallery.styled';
 import { ImageGalleryItem } from './ImageGalleryItem';
 import { LoadMoreButton } from 'components/LoadMoreButton/LoadMoreButton';
 
-export class ImageGallery extends Component {
-  static propTypes = {
-    searchQuery: PropTypes.string.isRequired,
-  };
+export const ImageGallery = ({ searchQuery }) => {
+  const [images, setImages] = useState([]);
+  const [imagesTotal, setImagesTotal] = useState([]);
+  const [page, setPage] = useState(1);
+  const [error, setError] = useState(null);
+  const [status, setStatus] = useState('idle');
 
-  state = {
-    images: [],
-    error: null,
-    status: 'idle',
-    page: 1,
-    totalImages: null,
-  };
+  useEffect(() => {
+    setImages([]);
+    setPage(1);
+    setImagesTotal(0);
+  }, [searchQuery]);
 
-  async componentDidUpdate(prevProps, prevState) {
-    const { searchQuery } = this.props;
-    const { page } = this.state;
-
-    if (
-      prevProps.searchQuery !== searchQuery ||
-      prevState.page !== this.state.page
-    ) {
-      this.setState({ status: 'pending', images: [], page: 1 });
-
-      const images = await galleryApi.fetchImagesByQuery(searchQuery, page);
-
-      if (images.hits.length > 0) {
-        this.setState({
-          images: this.state.images.concat(images.hits),
-          status: 'resolved',
-          totalImages: images.total,
-        });
-      } else {
-        this.setState({
-          error: 'No result by this query!',
-          status: 'rejected',
-        });
-        toast.error('No result by this query!');
-      }
+  useEffect(() => {
+    if (searchQuery === '') {
+      return;
     }
+    try {
+      setStatus('pending');
+      const response = galleryApi.fetchImagesByQuery(searchQuery, page);
+      response.then(data => {
+        if (data.hits.length === 0) {
+          console.log(123);
+          showError('No result by this query!');
+          return;
+        }
+        setImages(images => images.concat(data.hits));
+        setStatus('resolved');
+        setImagesTotal(data.total);
+      });
+    } catch (error) {
+      showError(error);
+    }
+  }, [searchQuery, page]);
+
+  const showError = error => {
+    setError(error);
+    setStatus('rejected');
+    toast.error(error);
+  };
+
+  const loadMore = () => {
+    setPage(prevPage => prevPage + 1);
+  };
+
+  if (status === 'idle') {
+    return <p>No match result yet</p>;
   }
 
-  loadMore = () => {
-    this.setState(prevState => ({ page: prevState.page + 1 }));
-  };
-
-  render() {
-    const { images, status, totalImages } = this.state;
-
-    if (status === 'idle') {
-      return <p>No match result yet</p>;
-    }
-
-    if (status === 'pending') {
-      return <Puff color="#3f51b5" />;
-    }
-
-    if (status === 'rejected') {
-      return (
-        <>
-          <p>{this.state.error}</p>
-          <ToastContainer
-            theme="light"
-            pauseOnHover={false}
-            autoClose={2000}
-            draggable={false}
-          />
-        </>
-      );
-    }
-
-    if (status === 'resolved') {
-      return (
-        <>
-          <ImageGalleryContainer>
-            {images.map(image => (
-              <ImageGalleryItem
-                key={image.id}
-                image={{
-                  webformatURL: image.webformatURL,
-                  tags: image.tags,
-                  largeImageURL: image.largeImageURL,
-                }}
-              ></ImageGalleryItem>
-            ))}
-          </ImageGalleryContainer>
-          {totalImages !== images.length && (
-            <LoadMoreButton onClick={this.loadMore} />
-          )}
-        </>
-      );
-    }
+  if (status === 'pending') {
+    return <Puff color="#3f51b5" />;
   }
-}
+
+  if (status === 'rejected') {
+    return (
+      <>
+        <p>{error}</p>
+        <ToastContainer
+          theme="light"
+          pauseOnHover={false}
+          autoClose={2000}
+          draggable={false}
+        />
+      </>
+    );
+  }
+
+  if (status === 'resolved') {
+    return (
+      <>
+        <ImageGalleryContainer>
+          {images.map(image => (
+            <ImageGalleryItem
+              key={image.id}
+              image={{
+                webformatURL: image.webformatURL,
+                tags: image.tags,
+                largeImageURL: image.largeImageURL,
+              }}
+            ></ImageGalleryItem>
+          ))}
+        </ImageGalleryContainer>
+        {imagesTotal !== images.length && <LoadMoreButton onClick={loadMore} />}
+      </>
+    );
+  }
+};
+
+ImageGallery.propTypes = {
+  searchQuery: PropTypes.string.isRequired,
+};
