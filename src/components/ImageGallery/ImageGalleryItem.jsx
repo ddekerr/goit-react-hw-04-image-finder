@@ -6,7 +6,6 @@ import {
   ImageGalleryImage,
   ModalImage,
 } from './ImageGallery.styled';
-import { connect } from 'formik';
 
 export const ImageGalleryItem = ({
   image: { webformatURL, largeImageURL, tags },
