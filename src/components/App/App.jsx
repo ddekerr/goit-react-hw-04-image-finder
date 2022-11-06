@@ -8,7 +8,6 @@ export const App = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
   const formSubmit = query => {
-    console.log('App State change')
     setSearchQuery(query.trim().toLowerCase())
   };
 

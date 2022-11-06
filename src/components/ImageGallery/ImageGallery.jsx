@@ -17,31 +17,39 @@ export const ImageGallery = ({ searchQuery }) => {
   const [status, setStatus] = useState('idle');
 
   useEffect(() => {
+    console.log('Reset');
     setImages([]);
     setPage(1);
     setImagesTotal(0);
   }, [searchQuery]);
 
   useEffect(() => {
-    if (searchQuery === '') {
-      return;
-    }
-    try {
-      setStatus('pending');
-      const response = galleryApi.fetchImagesByQuery(searchQuery, page);
-      response.then(data => {
-        if (data.hits.length === 0) {
-          console.log(123);
+    async function fetchImages() {
+      console.log('Send request');
+      try {
+        setStatus('resolved');
+        const { hits, total } = await galleryApi.fetchImagesByQuery(
+          searchQuery,
+          page
+        );
+        if (hits.length === 0) {
           showError('No result by this query!');
           return;
         }
-        setImages(images => images.concat(data.hits));
+        setImages(prevImages => prevImages.concat(hits));
+        setImagesTotal(total);
         setStatus('resolved');
-        setImagesTotal(data.total);
-      });
-    } catch (error) {
-      showError(error);
+      } catch (error) {
+        showError(error);
+      }
     }
+
+    if (searchQuery === '') {
+      console.log('No send request');
+      return;
+    }
+
+    fetchImages();
   }, [searchQuery, page]);
 
   const showError = error => {
@@ -54,47 +62,42 @@ export const ImageGallery = ({ searchQuery }) => {
     setPage(prevPage => prevPage + 1);
   };
 
-  if (status === 'idle') {
-    return <p>No match result yet</p>;
-  }
+  return (
+    <>
+      {status === 'idle' && <p>No match result yet</p>}
 
-  if (status === 'pending') {
-    return <Puff color="#3f51b5" />;
-  }
+      <ImageGalleryContainer>
+        {images.map(image => (
+          <ImageGalleryItem
+            key={image.id}
+            image={{
+              webformatURL: image.webformatURL,
+              tags: image.tags,
+              largeImageURL: image.largeImageURL,
+            }}
+          ></ImageGalleryItem>
+        ))}
+      </ImageGalleryContainer>
 
-  if (status === 'rejected') {
-    return (
-      <>
-        <p>{error}</p>
-        <ToastContainer
-          theme="light"
-          pauseOnHover={false}
-          autoClose={2000}
-          draggable={false}
-        />
-      </>
-    );
-  }
+      {status === 'rejected' && (
+        <>
+          <p>{error}</p>
+          <ToastContainer
+            theme="light"
+            pauseOnHover={false}
+            autoClose={2000}
+            draggable={false}
+          />
+        </>
+      )}
 
-  if (status === 'resolved') {
-    return (
-      <>
-        <ImageGalleryContainer>
-          {images.map(image => (
-            <ImageGalleryItem
-              key={image.id}
-              image={{
-                webformatURL: image.webformatURL,
-                tags: image.tags,
-                largeImageURL: image.largeImageURL,
-              }}
-            ></ImageGalleryItem>
-          ))}
-        </ImageGalleryContainer>
-        {imagesTotal !== images.length && <LoadMoreButton onClick={loadMore} />}
-      </>
-    );
-  }
+      {imagesTotal !== images.length && status === 'resolved' && (
+        <LoadMoreButton onClick={loadMore} />
+      )}
+
+      {status === 'pending' && <Puff color="#3f51b5" />}
+    </>
+  );
 };
 
 ImageGallery.propTypes = {

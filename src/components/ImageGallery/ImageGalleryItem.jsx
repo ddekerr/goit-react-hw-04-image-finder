@@ -16,10 +16,6 @@ export const ImageGalleryItem = ({
     setShowModal(show => !show);
   };
 
-  console.log(webformatURL);
-  console.log(largeImageURL);
-  console.log(tags);
-
   return (
     <>
       <ImageGalleryItemContainer>
