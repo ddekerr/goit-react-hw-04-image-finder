@@ -66,7 +66,6 @@ export const App = () => {
   };
 
   const showError = errorMessage => {
-    console.log('error')
     setError(errorMessage);
     toast.error(errorMessage);
   };
